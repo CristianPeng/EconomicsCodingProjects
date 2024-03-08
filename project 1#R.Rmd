@@ -1,0 +1,46 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+names: "Yuanhang Peng, Chris Meyer, Jonathan Gorlin, Will Knitter"
+---
+
+```{r}
+library(quantmod)
+stock_data <- getSymbols("BABA", auto.assign = FALSE)
+```
+
+```{r}
+  stock_data$price <- (Cl(stock_data)+Hi(stock_data)+Lo(stock_data)) / 3
+  stock_data$VP <- stock_data$price * Vo(stock_data)
+  stock_data$total_vp <- cumsum(stock_data$VP)
+  stock_data$total_v <- cumsum(Vo(stock_data))
+  stock_data$VWAP <- stock_data$total_vp / stock_data$total_v
+  x <- cbind(Cl(stock_data), stock_data$VWAP)
+  names(x) <- c("price", "VWAP")
+```
+
+
+```{r}
+myVWAP <- function(stock_data){
+  stock_data$price <- (Cl(stock_data)+Hi(stock_data)+Lo(stock_data)) / 3
+  stock_data$VP <- stock_data$price * Vo(stock_data)
+  stock_data$total_vp <- cumsum(stock_data$VP)
+  stock_data$total_v <- cumsum(Vo(stock_data))
+  stock_data$VWAP <- stock_data$total_vp / stock_data$total_v
+  x <- cbind(Cl(stock_data), stock_data$VWAP)
+  names(x) <- c("price", "VWAP")
+  return(x)
+}
+```
+
+```{r}
+myVWAP(stock_data)
+plot(x,legend.loc = "topleft")
+```
+
+
+
+
+
